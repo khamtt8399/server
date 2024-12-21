@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>FastAPI Chat App</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 0;
+				padding: 0;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+				background-color: #f4f4f4;
+			}
+
+			.chat-container {
+				width: 400px;
+				height: 600px;
+				display: flex;
+				flex-direction: column;
+				border: 1px solid #ccc;
+				border-radius: 10px;
+				background-color: #fff;
+				box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			}
+
+			.chat-box {
+				flex: 1;
+				padding: 10px;
+				overflow-y: auto;
+				border-bottom: 1px solid #ccc;
+			}
+
+			.chat-box p {
+				margin: 5px 0;
+				padding: 10px;
+				border-radius: 5px;
+			}
+
+			.chat-box .user {
+				background-color: #e0f7fa;
+				text-align: right;
+			}
+
+			.chat-box .others {
+				background-color: #f1f8e9;
+				text-align: left;
+			}
+
+			.input-container {
+				display: flex;
+				border-top: 1px solid #ccc;
+			}
+
+			.input-container input {
+				flex: 1;
+				padding: 10px;
+				border: none;
+				border-radius: 0;
+				outline: none;
+			}
+
+			.input-container button {
+				padding: 10px 20px;
+				border: none;
+				background-color: #007bff;
+				color: #fff;
+				cursor: pointer;
+				outline: none;
+			}
+
+			.input-container button:hover {
+				background-color: #0056b3;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="chat-container">
+			<div id="chat-box" class="chat-box"></div>
+			<div class="input-container">
+				<input
+					id="messageInput"
+					type="text"
+					placeholder="Type a message..."
+				/>
+				<button onclick="sendMessage()">Send</button>
+			</div>
+		</div>
+		<script>
+			const username = prompt("Nhập tên của bạn:");
+			const ws = new WebSocket(`ws://127.0.0.1:8000/ws/${username}`);
+
+			ws.onmessage = function (event) {
+				const chatBox = document.getElementById("chat-box");
+				const message = document.createElement("p");
+				message.textContent = event.data;
+
+				// Phân loại tin nhắn (giả định user gửi tin nhắn từ chính client này)
+				if (event.data.startsWith(username)) {
+					message.className = "user";
+				} else {
+					message.className = "others";
+					// Play audio for other user
+					var audio = new Audio("../static/audio.mp3");
+					audio.play();
+				}
+
+				chatBox.appendChild(message);
+				chatBox.scrollTop = chatBox.scrollHeight; // Cuộn xuống cuối
+			};
+
+			function sendMessage() {
+				const input = document.getElementById("messageInput");
+				const message = input.value;
+				ws.send(message); // Đánh dấu tin nhắn từ chính user này
+				input.value = ""; // Xóa nội dung input sau khi gửi
+			}
+		</script>
+	</body>
+</html>
