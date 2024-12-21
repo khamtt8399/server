@@ -16,7 +16,7 @@ templates = Jinja2Templates(directory="templates")
 
 
 # Thay đổi URL kết nối sang MySQL
-DATABASE_URL = "mysql+pymysql://khamtt:Tuongkham99!@localhost/chatdb"
+DATABASE_URL = "postgresql://database_for_app_user:kpaCIj3I3QcfRxgdhhKxpB6am89yHFVs@dpg-ctjbmalds78s73eoj8ug-a.singapore-postgres.render.com/database_for_app"
 
 # Kết nối đến MySQL
 engine = create_engine(DATABASE_URL)
